@@ -1,6 +1,5 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import './styling/signup.css'
 
 export default class SignUpPage extends React.Component {
   constructor(props){
@@ -46,34 +45,78 @@ export default class SignUpPage extends React.Component {
   }
   render(){
     return (
-      <div>
-        <p>
-          <h3 className="header">Signing Up</h3>
-        </p>
-        <p>
-          <select value={this.state.userType} onChange={this.selectUserType}>
-            <option value='Artist'>Artist</option>
-            <option value='Normal User'>Normal User</option>
-          </select>
-        </p>
-        <span className="paragraph">
-          Choose a username
-          <input onChange={this.changeUsername} value={this.state.usernameText}/>
-        </span>
-        <p>
-          Type your e-mail
-          <input onChange={this.changeEmail} value={this.state.emailText}/>
-        </p>
-        <p>
-          Choose a password
-          <input onChange={this.changePasswordText} value={this.state.passwordText}/>
-        </p>
-        <p>
-          Confirm the password
-          <input onChange={this.changePasswordConfirm} value={this.state.passwordConfirm}/>
-        </p>
-        <button onClick={this.processSigningUp}>Sign Up</button>
+      <div className="container-fluid">
+        <div className="col-md-6 col-md-push-3">
+          <center><h2>Signing Up</h2></center>
+          <div className="well">
+            <form className="form-horizontal">
+              <div className="form-group">
+                <label class="control-label col-sm-3">Usersame</label>
+                <div className="col-sm-6">
+                  <input className="form-control"onChange={this.changeUsername} value={this.state.usernameText}/>
+                </div>
+              </div>
+              <div className="form-group">
+                <label class="control-label col-sm-3">Password</label>
+                <div className="col-sm-6">
+                  <input className="form-control"onChange={this.changePasswordText} value={this.state.passwordText}/>
+                </div>
+              </div>
+              <div className="form-group">
+                <label class="control-label col-sm-3">Confirm Password</label>
+                <div className="col-sm-6">
+                  <input className="form-control"onChange={this.changePasswordConfirm} value={this.state.passwordConfirm}/>
+                </div>
+              </div>
+              <div className="form-group">
+                <label class="control-label col-sm-3">E-mail</label>
+                <div className="col-sm-6">
+                  <input className="form-control"onChange={this.changeEmail} value={this.state.emailText}/>
+                </div>
+              </div>
+            </form>
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">User Type
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li value="Artist">Artist</li>
+                <li value="Normal User">Normal User</li>
+              </ul>
+            </div>
+          </div>
+          <div className="form-group">
+            <Link to="/">
+            <button type="button" className="btn btn-primary form-control" onClick={this.processSigningUp}>Sign up</button>
+            </Link>
+          </div>
+        </div>
       </div>
+
     )
   }
 }
+
+/*<p>
+  <select value={this.state.userType} onChange={this.selectUserType}>
+    <option value='Artist'>Artist</option>
+    <option value='Normal User'>Normal User</option>
+  </select>
+</p>
+<span className="paragraph">
+  Choose a username
+  <input onChange={this.changeUsername} value={this.state.usernameText}/>
+</span>
+<p>
+  Type your e-mail
+  <input onChange={this.changeEmail} value={this.state.emailText}/>
+</p>
+<p>
+  Choose a password
+  <input onChange={this.changePasswordText} value={this.state.passwordText}/>
+</p>
+<p>
+  Confirm the password
+  <input onChange={this.changePasswordConfirm} value={this.state.passwordConfirm}/>
+</p>
+<button onClick={this.processSigningUp}>Sign Up</button>
+</div>*/
