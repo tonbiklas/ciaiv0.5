@@ -1,5 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import Dropdown from 'react-dropdown';
+import {Navbar, NavItem, Nav} from 'react-bootstrap'
+import Store from './store/Store';
 
 export default class SignUpPage extends React.Component {
   constructor(props){
@@ -10,7 +13,6 @@ export default class SignUpPage extends React.Component {
       passwordConfirm:"",
       emailText:"",
       typeUser:"",
-      isRegistered:false//Vai ajudar para sabermos se vale guardamos estas informações ou não
     }
     this.changeUsername = this.changeUsername.bind(this);
     this.changePasswordText = this.changePasswordText.bind(this);
@@ -36,8 +38,7 @@ export default class SignUpPage extends React.Component {
   }
   processSigningUp(e){
     if(this.state.passwordConfirm===this.state.passwordText){
-      alert("User Registered")
-      this.setState({isRegistered:true})
+      Store.registerUser(this.state.usernameText,this.state.passwordConfirm,this.state.emailText,this.state.typeUser)
     }
     else{
       alert("You must confirm the password")
@@ -46,47 +47,59 @@ export default class SignUpPage extends React.Component {
   render(){
     return (
       <div className="container-fluid">
+      <Navbar staticTop >
+        <Navbar.Header>
+          <Navbar.Brand>
+            <a href="#">Welcome to ArtBook</a>
+          </Navbar.Brand>
+        </Navbar.Header>
+            <Nav>
+              <NavItem eventKey={1} ><Link to="/">Home</Link></NavItem>
+              <NavItem eventKey={2} ><Link to="/albuns">Albuns</Link></NavItem>
+            </Nav>
+            <Nav pullRight>
+              <NavItem eventKey={1}><Link to="/login">Log In</Link></NavItem>
+              <NavItem eventKey={2}><Link to="/signup">Sign Up</Link></NavItem>
+            </Nav>
+      </Navbar>
         <div className="col-md-6 col-md-push-3">
-          <center><h2>Signing Up</h2></center>
+          <center><h1>Welcome!</h1></center>
           <div className="well">
             <form className="form-horizontal">
               <div className="form-group">
-                <label class="control-label col-sm-3">Usersame</label>
+                <label className="control-label col-sm-3">Usersame</label>
                 <div className="col-sm-6">
                   <input className="form-control"onChange={this.changeUsername} value={this.state.usernameText}/>
                 </div>
               </div>
               <div className="form-group">
-                <label class="control-label col-sm-3">Password</label>
+                <label className="control-label col-sm-3">Password</label>
                 <div className="col-sm-6">
-                  <input className="form-control"onChange={this.changePasswordText} value={this.state.passwordText}/>
+                  <input type="password"className="form-control"onChange={this.changePasswordText} value={this.state.passwordText}/>
                 </div>
               </div>
               <div className="form-group">
-                <label class="control-label col-sm-3">Confirm Password</label>
+                <label className="control-label col-sm-3">Confirm Password</label>
                 <div className="col-sm-6">
-                  <input className="form-control"onChange={this.changePasswordConfirm} value={this.state.passwordConfirm}/>
+                  <input type="password"className="form-control"onChange={this.changePasswordConfirm} value={this.state.passwordConfirm}/>
                 </div>
               </div>
               <div className="form-group">
-                <label class="control-label col-sm-3">E-mail</label>
+                <label className="control-label col-sm-3">E-mail</label>
                 <div className="col-sm-6">
                   <input className="form-control"onChange={this.changeEmail} value={this.state.emailText}/>
                 </div>
               </div>
             </form>
-            <div class="dropdown">
-              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">User Type
-              <span class="caret"></span></button>
-              <ul class="dropdown-menu">
-                <li value="Artist">Artist</li>
-                <li value="Normal User">Normal User</li>
-              </ul>
-            </div>
+			<Dropdown className="dropdown" options={[
+             {value: 'one', label: 'User'},
+             {value: 'two', label: 'Artist'}
+             ]} value={this.typeUser} placeholder="User Type"/>
+
           </div>
           <div className="form-group">
             <Link to="/">
-            <button type="button" className="btn btn-primary form-control" onClick={this.processSigningUp}>Sign up</button>
+              <button type="button" className="btn btn-primary form-control" onClick={this.processSigningUp}>Sign up</button>
             </Link>
           </div>
         </div>
