@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 import Dropdown from 'react-dropdown';
 import {Navbar, NavItem, Nav} from 'react-bootstrap'
 import Store from './store/Store';
+import dispatcher from './dispatcher.js'
 
 export default class SignUpPage extends React.Component {
   constructor(props){
@@ -39,6 +40,13 @@ export default class SignUpPage extends React.Component {
   processSigningUp(e){
     if(this.state.passwordConfirm===this.state.passwordText){
       Store.registerUser(this.state.usernameText,this.state.passwordConfirm,this.state.emailText,this.state.typeUser)
+      dispatcher.dispatch({
+        tag:"REGISTER_USER",
+        username: this.state.usernameText,
+        password: this.state.passwordText,
+        email: this.state.emailText,
+        type: this.state.typeUser
+      })
     }
     else{
       alert("You must confirm the password")
@@ -50,7 +58,7 @@ export default class SignUpPage extends React.Component {
       <Navbar staticTop >
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#">Welcome to ArtBook</a>
+            Welcome to ArtBook
           </Navbar.Brand>
         </Navbar.Header>
             <Nav>

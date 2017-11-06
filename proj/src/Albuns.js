@@ -7,17 +7,9 @@ export default class Albuns extends React.Component{
   constructor(props){
     super(props)
     this.state={
-      logged:Store.getUserLogged(),
-      isLogged:Store.isLogged(),
     }
   }
-  componentWillUnmount(){
-    Store.on("change", () => {
-      this.setState({
-        logged:Store.getUserLogged(),
-        isLogged:Store.isLogged()
-      })
-    })
+  componentDidUnmount(){
   }
   render(){
     return(
@@ -25,13 +17,13 @@ export default class Albuns extends React.Component{
       <Navbar staticTop >
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#">Welcome to ArtBook {this.state.logged.username}</a>
+            Welcome to ArtBook {Store.getLoggedUsername()}
           </Navbar.Brand>
         </Navbar.Header>
             <Nav>
               <NavItem eventKey={1} ><Link to="/">Home</Link></NavItem>
               <NavItem eventKey={2} ><Link to="/albuns">Albuns</Link></NavItem>
-              <NavItem disabled={!this.state.isLogged} eventKey={3} href="/registart">Add ArtPiece</NavItem>
+              <NavItem disabled={!Store.isArtist() || !Store.isLogged()} eventKey={3}><Link to="/registart">Add ArtPiece</Link></NavItem>
             </Nav>
             <Nav pullRight>
               <NavItem eventKey={1}><Link to="/login">Log In</Link></NavItem>

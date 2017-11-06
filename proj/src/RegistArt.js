@@ -1,54 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Dropdown from 'react-dropdown'
-
-export default class RegistArt extends React.Component{
-  constructor(props){
-    super(props);
-    this.state={
-      name:"",
-      description:"",
-	  artMultimedia: [],
-	  date: "",
-	  keywords: [],
-	  price: "",
-	  availableToSell: ""}
-	  this.changeArtName = this.changeArtName.bind(this);
-	  this.changeArtDescription = this.changeArtDescription.bind(this);
-	  this.changeArtPrice = this.changeArtPrice.bind(this);
-  }
-
-  changeArtName(e){
-    this.setState({name:e.target.value})
-  }
-
-  changeArtDescription(e){
-    this.setState({description:e.target.value})
-  }
-
-  changeArtPrice(e){
-	  this.setState({price: e.target.value})
-  }
-
-  render(){
-    return (
-      <div className="container-fluid">
-        <center><h2>Register Art Piece</h2></center>
-        <div className="row">
-          <div className="well col-md-6 col-md-push-3">
-            <form>
-			<div className="form-group">
-              <label className="control-label col-sm-1">Name</label>
-              <div className="col-sm-4 col-sm-push-7">
-                <input className="form-control"onChange={this.changeArtName} value={this.state.name}/>
-              </div>
-
-			  <label className="control-label col-sm-1">Description</label>import React from 'react';
-import { Link } from 'react-router-dom';
-import Dropdown from 'react-dropdown'
 import $	from 'jquery';
+import {Navbar, NavItem, Nav} from 'react-bootstrap'
 import DatePicker from 'react-date-picker';
-import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import Store from './store/Store'
+import dispatcher from './dispatcher'
 
 
 export default class RegistArt extends React.Component{
@@ -56,17 +13,17 @@ export default class RegistArt extends React.Component{
   constructor(props){
     super(props);
     this.state={
-	  author: this.props.author,
+	    author: Store.getLoggedUsername(),
       name:"",
       description:"",
-	  artMultimedia: [],
-	  date: new Date(),
-	  keywords: [],
-	  price: "",
-	  availableToSell: "",
-	  currentKeyword:"",
-	  currentURL:"",
-	  isShowingDate:false}
+	    artMultimedia: [],
+	    date: "",
+	    keywords: [],
+	    price: "",
+	    availableToSell: "",
+	    currentKeyword:"",
+	    currentURL:"",
+     }
 	  this.changeArtName = this.changeArtName.bind(this);
 	  this.changeArtDescription = this.changeArtDescription.bind(this);
 	  this.changeArtPrice = this.changeArtPrice.bind(this);
@@ -79,6 +36,58 @@ export default class RegistArt extends React.Component{
 	  this.multimediaListAppear = this.multimediaListAppear.bind(this);
 	  this.keywordListAppear = this.keywordListAppear.bind(this);
 	  this.changeDate = this.changeDate.bind(this);
+	  this.validateRegist = this.validateRegist.bind(this);
+	  this.showPrice = this.showPrice.bind(this);
+  }
+
+  showPrice(){
+	  if(this.state.availableToSell.toUpperCase().localeCompare("YES") === 0){
+		  $("#showprice").show();
+	  }
+	  }
+
+  validateRegist(){
+	  if(this.state.name === ""){
+		  alert("A name for the piece is required!")
+	  }
+	  else
+		  if(this.state.description === ""){
+			  alert("A description for the piece is required!")
+		  }
+		  else
+			 if(this.state.keywords.length == 0)
+			  {
+				  alert("Please insert at least one keyword.")
+			  }
+			  else
+			  if(this.state.artMultimedia.length == 0){
+					  alert("Please insert at least one Art Piece!")
+					  }
+			  else
+					   if(this.state.date ===""){
+				  alert("Please specify the creation date for this piece!")
+			  }
+			  else
+				  if(!this.state.availableToSell === ""){
+					  alert("Please indicate if this piece will be available to sell!")
+				  }
+				  else
+				  {
+            dispatcher.dispatch({tag:"REGISTER_ARTPIECE", artPiece: {
+              author: this.state.author,
+              name:this.state.name,
+              description:this.state.description,
+              artMultimedia: this.state.artMultimedia,
+              date: this.state.date,
+              keywords: this.state.keywords,
+              price: this.state.price,
+              availableToSell: this.state.availableToSell
+            } })
+				  }
+  }
+
+  isItAvailable(e){
+	  this.setState({availableToSell: e.target.value})
   }
 
   changeDate = date => this.setState({date: date})
@@ -156,29 +165,35 @@ export default class RegistArt extends React.Component{
   render(){
     return (
       <div className="container-fluid">
+	<Navbar staticTop >
+          <Navbar.Header>
+            <Navbar.Brand>
+              New Piece of Art
+            </Navbar.Brand>
+          </Navbar.Header>
+          <Nav>
+            <NavItem eventKey={1}><Link to="/">Home</Link></NavItem>
+            <NavItem eventKey={2} ><Link to="/albuns">Albuns</Link></NavItem>
+          </Nav>
+          <Nav pullRight>
+            <NavItem eventKey={1}><Link to="/login">Log In</Link></NavItem>
+            <NavItem eventKey={2}><Link to="/signup">Sign Up</Link></NavItem>
+          </Nav>
+        </Navbar>
         <center><h2>Register Art Piece</h2></center>
         <div className="row">
           <div className="well col-md-6 col-md-push-3">
             <form>
 			<div className="form-group">
-              <label className="control-label col-sm-1">Name</label>
 
-             <input className="form-control"onChange={this.changeArtName} value={this.state.name}/>
+              <label className="control-label col-sm-1">Name</label>
+             <input className="form-control" placeholder="Name of the art piece" onChange={this.changeArtName} value={this.state.name} required/>
 
 			  <label className="control-label col-sm-1">Description</label>
-			  <input className="form-control" onChange={this.changeArtDescription} value={this.state.description}/>
-
-			  <label className="control-label col-sm-1">Price</label>
-			  <input className="form-control" onChange={this.changeArtPrice} value={this.state.price}/>
-
-			  <label className="control-label col-sm-6">Creation Date</label>
-			  <div id="datepicker">
-			  <DatePicker className="col-sm-6" calendarType="ISO 8601" onChange={this.changeDate} value={this.state.date} />
-			  </div>
-
+			  <input className="form-control" placeholder="Description of the piece" onChange={this.changeArtDescription} value={this.state.description} required/>
 
 			  <label className="control-label col-sm-6">Insert New Keyword</label>
-			  <input className="form-control" type="text" onChange={this.changeKeywords} value={this.state.currentKeyword}/>
+			  <input className="form-control" type="text" placeholder="A keyword that describes your piece" onChange={this.changeKeywords} value={this.state.currentKeyword}/>
 			  &nbsp;
 			  <button type="button" className="btn btn-primary" onClick={this.insertKeyword}>Insert</button>
              &nbsp;
@@ -188,7 +203,7 @@ export default class RegistArt extends React.Component{
 			 </div>
 
 			 <label className="control-label col-sm-6">Insert new Art Piece </label>
-			 <input className="form-control" type="text" onChange={this.changeMultimedia} value={this.state.currentURL}/>
+			 <input className="form-control" type="text" placeholder="URL to a multimedia content. Accepted formats: jpg, mp3, mp4" onChange={this.changeMultimedia} value={this.state.currentURL}/>
 
 			 <button type="button" className="btn btn-primary" onClick={this.insertMultimedia}>Insert</button>
 
@@ -197,35 +212,29 @@ export default class RegistArt extends React.Component{
 			 <div> {this.multimediaURLList()} </div>
 			 </div>
 
+			  <label className="control-label col-sm-6">Creation Date</label>
+			  <div id="datepicker">
+			  <DatePicker maxDate = {new Date()} className="col-sm-6" calendarType="ISO 8601" onChange={this.changeDate} value={this.state.date} />
+			  <p>&nbsp;</p>
+			  </div>
+
 			  <Dropdown className="dropdown" options={[
              {value: 'one', label: 'Yes'},
              {value: 'two', label: 'No'}
-             ]} value={this.availableToSell} placeholder="Is it avilable to sell?"/>
+             ]} onChange={this.isItAvailable} value={this.availableToSell} placeholder="Is it avilable to sell?"/>
+
+	          <div id="showprice" hidden>
+
+	          <label className="control-label col-sm-1">Price</label>
+			  <input className="form-control"
+			  placeholder="The minimum bid value accepted for this piece. Price will be set to zero if this field is left blank!"
+			  type="number" min="0" onChange={this.changeArtPrice} value={this.state.price}/>
+			  </div>
 
             </div>
             </form>
 
-          </div>
-
-        </div>
-
-      </div>
-    )
-  }
-}
-			  <input className="form-control" onChange={this.changeArtDescription} value={this.state.description}/>
-
-			  <label className="control-label col-sm-1">Price</label>
-			  <input className="form-control" onchange={this.changeArtPrice} value={this.state.price}/>
-
-			  <label className="control-label col-sm-1">Available to Sell</label>
-			  <Dropdown className="dropdown" options={[
-             {value: 'one', label: 'Yes'},
-             {value: 'two', label: 'No'}
-             ]} value={this.availableToSell} placeholder="Is it avilable to sell?"/>
-
-            </div>
-            </form>
+			<button type="button" className="btn btn-primary" onClick={this.validateRegist}>Register</button>
 
           </div>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import Store from './store/Store'
 import {Navbar, NavItem, Nav} from 'react-bootstrap'
+import Dispatcher from './dispatcher.js'
 
 export default class LogInScreen extends React.Component {
   constructor(props){
@@ -21,8 +22,7 @@ export default class LogInScreen extends React.Component {
     this.setState({passwordText:text.target.value});
   }
   processLogIn(){
-    if(!Store.logIn(this.state.usernameText,this.state.passwordText))
-      alert("Username or password incorrect")
+    Dispatcher.dispatch({tag:"LOG_IN", username:this.state.usernameText, password:this.state.passwordText})
   }
   render(){
     return (
@@ -30,7 +30,7 @@ export default class LogInScreen extends React.Component {
       <Navbar staticTop >
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#">Welcome to ArtBook</a>
+            Welcome to ArtBook
           </Navbar.Brand>
         </Navbar.Header>
             <Nav>
@@ -51,7 +51,7 @@ export default class LogInScreen extends React.Component {
                 <input className="form-control" placeholder="Username" onChange={this.changeUsername} value={this.state.usernameText} required/>
               </div>
               <div className="form-group">
-                <input className="form-control" placeholder="Password" onChange={this.changePassword} value={this.state.passwordText} required/>
+                <input type ="password" className="form-control" placeholder="Password" onChange={this.changePassword} value={this.state.passwordText} required/>
               </div>
             <div className="form-group">
               <Link to="/"><button type="button" className="btn btn-primary form-control" onClick={this.processLogIn}>Log in</button></Link>

@@ -7,18 +7,18 @@ export default class ArtPiece extends React.Component{
   componentDidMount() {
 	this.bidAppear();
 	}
-	
+
   constructor(props){
     super(props);
     this.state={
-		 author: "André Castela",
+	  author: "André Castela",
       name:"João Santos",
       description:"This is the description of this art piece",
-	  artMultimedia: ["/images/foto-da-capa.jpg"],
+	  artMultimedia: ["images/foto-da-capa.jpg", "images/foto-da-capa.jpg", ".mp4"],
 	  date: new Date(),
 	  keywords: ["p", "r"],
-	  price: 1,
-	  availableToSell: "yes",
+	  price: "",
+	  availableToSell: "",
 	  owner:"",
 	  bid:""
 	}
@@ -31,7 +31,7 @@ export default class ArtPiece extends React.Component{
 }
 
 bidAppear(){
-	  if(this.state.availableToSell.toUpperCase().localeCompare("YES") == 0){
+	  if(this.state.availableToSell.toUpperCase().localeCompare("YES") === 0){
 		  $("#bids").show();
 	  }
 }
@@ -66,35 +66,35 @@ keywordList(){
 	  </ol>
 	  </div>
   }
-  
- multimediaList(url){
-	return
-	<div>
-	   if(url.split(".").pop() === "jpg")
+
+ multimediaList(artURL){
+	if(artURL.split(".").pop() === "jpg")
 	  {
-		  <img src="C:\Users\Ricardo\Desktop\ciaiv0.5\proj\src\images\foto-da-capa.jpg" alt="image not found"/>  
+		  return(
+		  <img src = {artURL} alt=""/>)
 	  }
-      if(url.split(".").pop() === "mp3"){
+      if(artURL.split(".").pop() === "mp3"){
+			   return(
 			   <Sound
-                url="cool_sound.mp3"
+                url = {artURL}
                 playStatus={Sound.status.STOPPED}
-                onFinishedPlaying={this.handleSongFinishedPlaying}/>
+                onFinishedPlaying={this.handleSongFinishedPlaying}/>)
 		  }
-	  if(url.split(".").pop() === "mp4"){
+	  if(artURL.split(".").pop() === "mp4"){
+		  return(
 			   <video loop="" autoplay="" muted="">
-               <source src={url}/>
-               </video>
+               <source src={artURL} />
+               </video>)
 		  }
-		  </div>
- } 
-  
+ }
+
   renderMultimedia(){
-var counter = 0;	 
+var counter = 0;
 	 return <div className="multimediaList">
 	  {this.state.artMultimedia.map((url) =>
 	  (
-	  <li key={counter++}>{this.multimediaList(url)} </li>
-	  ))}  
+	   <center> <div key={counter++}>{this.multimediaList(url)} </div> </center>
+	  ))}
 	  </div>
   }
 
@@ -105,34 +105,33 @@ render(){
         <center><h2>{this.state.name}</h2></center>
         <div className="row">
           <div className="well col-md-6 col-md-push-3">
-		  
-          <div className="multimedia"> {this.renderMultimedia()} </div>		  
+
+          <div className="multimedia"> {this.renderMultimedia()} </div>
 
 		  <label className="control-label col-sm-1">Author:</label>
 		   <p> &emsp;{this.state.author}</p>
-		  
+
 		   <label className="control-label col-sm-1">Description:</label>
 		   <p> &emsp; &emsp; &emsp;{this.state.description} </p>
-		   
+
 		    <label className="control-label col-sm-6">Creation Date:</label>
 			<p> 1 </p>
-		   
+
 		     <label className="control-label col-sm-6">Available To Sell:</label>
 			 <p> {this.state.availableToSell}</p>
-			
+
 			<label className="control-label col-sm-1">Price:</label>
 			<p> {this.state.price}</p>
-			
+
 			<div id="bids" hidden>
-			<input type="text" className="form-control" type="number"  onChange={this.changeBid} value={this.state.bid}/>
+			<input type="text" className="form-control" type="number" min="0"  onChange={this.changeBid} value={this.state.bid}/>
 			 <button type="button" className="btn btn-primary" onClick={this.submitBid}>Make Bid</button>
 			</div>
 			 <label className="control-label col-sm-1">Owner:</label>
 			 <p> &emsp; i{this.state.owner}</p>
-			
+
 			<label className="control-label col-sm-1">Keywords:</label>
 			<div>{this.keywordList()}</div>
-		  
 		  </div>
 		  </div>
 		  </div>
