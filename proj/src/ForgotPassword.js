@@ -1,5 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import {Navbar, NavItem, Nav} from 'react-bootstrap';
+import Store from './store/Store';
 
 export default class ForgotPassword extends React.Component{
   constructor(props){
@@ -13,11 +15,26 @@ export default class ForgotPassword extends React.Component{
     this.processNewPassword = this.processNewPassword.bind(this);
   }
   processNewPassword(){
-    if(this.state.email===this.state.confirmEmail)
-      alert("A new password was sent to your email")
-    else{
-      alert("Please confirm your e-mail")
-    }
+	  if(this.state.email === ""){
+		  alert("Please fill the Email field!")
+	  }
+	  else
+		  if(this.state.confirmEmail === "")
+		  {
+			  alert("Please confirm your Email!")
+		  }
+		  else
+			  if(this.state.email!==this.state.confirmEmail)
+			  {
+				  alert("The Email confirmation is wrong!")
+			  }
+			  else
+				  if(!Store.emailExists(this.state.email)){
+					  alert("This email is not signed up to ArtBook.")
+				  }
+				  else{
+				  alert("A new password was sent to your Email!")
+				  }
   }
   changeEmail(e){
     this.setState({email:e.target.value})
@@ -28,6 +45,22 @@ export default class ForgotPassword extends React.Component{
   render(){
     return(
       <div className="container-fluid">
+	  
+	  <Navbar staticTop >
+        <Navbar.Header>
+          <Navbar.Brand>
+            ArtBook
+          </Navbar.Brand>
+        </Navbar.Header>
+            <Nav>
+              <NavItem eventKey={1} ><Link to="/">Home</Link></NavItem>
+            </Nav>
+            <Nav pullRight>
+              <NavItem eventKey={1}><Link to="/login">Log In</Link></NavItem>
+            </Nav>
+      </Navbar>
+	  
+	  
         <div className="row">
           <div className="col-md-6 col-md-push-3">
             <h2 align="center">Password Recovery</h2>

@@ -1,81 +1,97 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Sound from 'react-sound';
-import $	from 'jquery';
+import Store from './store/Store';
+import {Navbar, NavItem, Nav} from 'react-bootstrap';
+import Dispatcher from './dispatcher.js';
 
 
 export default class ArtistGallery extends React.Component{
-  
   constructor(props){
     super(props);
     this.state={
-		author: "Catela",
-		artPieces: [],
+		author: this.props.match.params.author,
+		logged:Store.getUserLogged(),
+      isLogged:Store.isLogged(),
+		artPieces: Store.getArtPiecesByAuthor(this.props.match.params.author),
+		artist:""
 	}
-	this.multimediaList = this.multimediaList.bind(this);
-	this.renderMultimedia = this.renderMultimedia.bind(this);
-	this.checkAvailability = this.checkAvailability.bind(this);
+	this.renderPieceImage = this.renderPieceImage.bind(this);
+	this.logout= this.logout.bind(this);
+	this.searchArtist = this.searchArtist.bind(this);
   }
   
-  checkAvailability( available){
-	  if(available.toUpperCase().localeCompare("YES") === 0){
-		  $("#price").show();
-	  }
-	  }
-  
-  multimediaList(url){
-	if(url.split(".").pop() === "jpg")
-	  {
-		  return(
-		  <img src= './images/foto-da-capa.jpg' alt=""/>)  
-	  }
-      if(url.split(".").pop() === "mp3"){
-			   return(
-			   <Sound
-                url="cool_sound.mp3"
-                playStatus={Sound.status.STOPPED}
-                onFinishedPlaying={this.handleSongFinishedPlaying}/>)
-		  }
-	  if(url.split(".").pop() === "mp4"){
-		  return(
-			   <video loop="" autoplay="" muted="">
-               <source src={url}/>
-               </video>)
-		  }
- } 
-  
-   renderMultimedia(){
-var counter = 0;	 
-	 return <div className="multimediaList">
-	  {this.state.artMultimedia.map((url) =>
-	  (
-	  <li key={counter++}>{this.multimediaList(url)} </li>
-	  ))}  
-	  </div>
+  componentWillUnmount(){
+    Store.on("change", () => {
+      this.setState({
+        logged:Store.getUserLogged(),
+        isLogged:Store.isLogged()
+      })
+    })
   }
   
+   logout()
+  {
+	   Dispatcher.dispatch({tag:"LOG_OUT"})
+  }
   
+   searchArtist(e){
+	  this.setState({artist: e.target.value})
+  }
+	  
+renderPieceImage(piece){
+var pos = 0;	 
+while(piece.artMultimedia.length > pos){
+	if(piece.author.localeCompare(this.state.author) === 0){
+	if(piece.artMultimedia[pos].split(".").pop() === "jpg")
+	  { 
+          return(
+		  <div className="well">
+		 <Link to={"/artpiece/" + this.state.author +"/"+ piece.name}> <center><h3> {piece.name}</h3></center> </Link>
+		 <center> <img src= {piece.artMultimedia[pos]} alt=""/> </center>
+		<center><div> Available to Sell:{piece.availableToSell}</div></center>	
+		  </div>
+		  )
+	}
+	}
+	pos++;}
+	
+	return( 
+<div className="well">
+<Link to={"/artpiece/" + this.state.author +"/"+ piece.name}> <center><h3> {piece.name}</h3></center> </Link>
+<center><img src= './images/default-art-image.jpg' alt="d"/></center>
+ <center><div> Available to Sell:{piece.availableToSell}</div></center>
+</div>
+)
+
+
+}
+
   render(){
 	  return (
 	 <div className="container-fluid">
+	 
+	 <Navbar staticTop >
+        <Navbar.Header>
+          <Navbar.Brand>
+            ArtBook
+          </Navbar.Brand>
+        </Navbar.Header>
+            <Nav>
+              <NavItem eventKey={1}><Link to="/">Home</Link></NavItem>
+              <NavItem disabled={!Store.isArtist() || !Store.isLogged()} eventKey={3}><Link to="/registart">Add ArtPiece</Link></NavItem>
+			  
+            </Nav>
+            <Nav pullRight>
+              <NavItem eventKey={1}><Link to="/login">Log In</Link></NavItem>
+			  <NavItem disabled={!Store.isLogged()} onClick={this.logout} eventKey={3}><Link to="/login">Log out</Link></NavItem> 
+            </Nav>
+      </Navbar>
+	 
         <center><h2> {this.state.author} Gallery </h2></center>
 		<div className="artPieces">
 		{this.state.artPieces.map((piece) =>
 		(
-		<center><h3>{piece.name}</h3></center>,
-		piece.artMultimedia.map((url) =>
-		(
-		<div> className="multimedia"> {this.renderMultimedia()} 
-		<label> className="control-label col-sm-6">Available To Sell:</label>
-		<p> {piece.availableToSell}</p>	
-		<div id="price" hidden>
-		<div>{this.checkAvailability(piece.availableToSell)} </div>
-		<label> className="control-label col-sm-6">Price:</label>
-		<p> {piece.price}</p>
-		</div>
-		</div>
-				
-		))
+		<div> {this.renderPieceImage(piece)} </div>
 		))}
 		</div>
 		</div>
