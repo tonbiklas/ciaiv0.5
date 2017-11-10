@@ -208,15 +208,15 @@ export default class RegistArt extends React.Component{
           <div className="form-group">
 
           <div className="form-group">
-          <label className="control-label col-sm-1">Name</label>
+          <label className="control-label ">Name</label>
           <input className="form-control" placeholder="Name of the art piece" onChange={this.changeArtName} value={this.state.name} required/>
           </div>
 
           <div className="form-group">
-          <label className="control-label col-sm-1">Description</label>
+          <label className="control-label">Description</label>
           <input className="form-control" placeholder="Description of the piece" onChange={this.changeArtDescription} value={this.state.description} required/>
           </div>
-
+          {/*Technical Information*/}
           <div className="form-group">
           <label className="control-label">Insert New Keyword</label>
           <div className="form-inline">
@@ -245,6 +245,7 @@ export default class RegistArt extends React.Component{
 
           <div className="form-group">
           <div id="datepicker" >
+          <label className="control-label ">Creation Date</label>
           <DatePicker className="form-control" dateFormat="LLL" placeholderText="Select the creation date  " maxDate={moment()} fixedHeight onChange={this.changeDate} selected={this.state.date} />
           </div>
           </div>
@@ -259,9 +260,16 @@ export default class RegistArt extends React.Component{
           </select>
           </div>
 
+          <div className="form-group">
+            <label className="control-label">Price</label>
+            <div className="form-inline">
+              <input className="form-control" type="text" onChange={this.changeArtPrice} value={this.state.price}/>
+            </div>
           </div>
 
+          </div>
 
+          
           <button type="button" className="form-control btn btn-primary" onClick={this.validateRegist}>Register</button>
           </div>
           </div>

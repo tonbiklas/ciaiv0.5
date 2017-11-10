@@ -1,0 +1,28 @@
+1. Um utilizador regista-se na aplicação, dando o seu nome, e-mail, password e tipo de user (escolha entre "Artist" e "Normal User").
+
+2. Um artista faz loggin na aplicação através do seu e-mail e password.
+
+3. Um utilizador faz loggin na aplicação através do seu e-mail e password.
+
+5. Um artista faz loggin e adiciona uma peça de arte (multimedia) à sua galeria virtual, dando para cada uma delas: um nome, informações técnicas sobre a peça, um texto de descrição, disponibilidade para venda, preço(opcional), palavras-chave que devem descrever a peça e um url para a peça de arte.
+
+5.1 O artista vê a nova peça de arte na sua galeria.
+
+6. Um artista faz loggin, vai até à sua galeria, escolhe uma peça de arte e define o novo preço da mesma.
+
+7. Um utilizador pesquisa um artista e vê como resultado a sua galeria.
+
+8. Um utilizador escolhe um artista, vê a sua galeria e escolhe uma peça carrega numa das palavras-chave dessa peça e vê, noutra página, todas as peças mais recentes de qualquer artista com essa palavra-chave.
+
+9. Um utilizador escolhe uma peça de arte e envia um pedido de compra ao artista, dando um valor igual ou acima do preço definido pelo artista (se este existir). 
+
+9.1. Um artista recusa a proposta de compra de um utilizador, vê esta desaparecer das sua caixa de notificações e uma notificação é enviada para o utilizador.
+
+9.2. Um artista aceita a proposta de compra de um utilizador e uma notificação é enviada para o utilizador
+
+9.2.1 O utilizador pede que a compra seja pública.
+
+9.3 O artista faz loggin e confirma que o pagamento da proposta de compra foi executado.
+
+9.4 O utilizador vê na página da peça que comprou o seu nome no campo que indica quem a comprou.
+

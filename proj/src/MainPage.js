@@ -17,6 +17,7 @@ export default class MainPage extends React.Component{
     this.logout = this.logout.bind(this);
   }
   notiOwner(answer,id,user){
+    alert(user)
     Store.notiOwner(answer,id,user);
   }
   logout()
@@ -51,8 +52,8 @@ export default class MainPage extends React.Component{
           if(notifications[i].answer === "yes"){
             return(
               <p>The Artist {notifications[i].answerFrom} has accepted your offer. Do you wish that your name is displayed as the piece owner?
-              <Link to="/" onClick={ () => {this.notiOwner("yes", notifications[i].id, Store.getLoggedUsername())}}>Yes</Link>
-              <Link to="/" onClick={ () => {this.notiOwner("no", notifications[i].id, Store.getLoggedUsername())}}>No</Link>
+                <Link to="/" onClick={ () => {this.notiOwner("yes", notifications[i].id, Store.getLoggedUsername())}}>Yes</Link>
+                <Link to="/" onClick={ () => {this.notiOwner("no", notifications[i].id, Store.getLoggedUsername())}}>No</Link>
               </p>
             )
           }
@@ -63,8 +64,8 @@ export default class MainPage extends React.Component{
           }
           else if(notifications[i].type === "Confirm"){
             return(
-              <p>Please click <Link to="/" onClick={ () => {this.confirmTrans(notifications[i].id, Store.getLoggedUsername())}} >here</Link>
-              when the transaction from {notifications[i].to} for the piece {notifications[i].pieceName} has been confirmed.
+              <p>Please click <Link to="/" onClick={ () => {this.confirmTrans(notifications[i].id, Store.getLoggedUsername())}} >here </Link>
+                when the transaction from {notifications[i].to} for the piece {notifications[i].pieceName} has been confirmed.
               </p>
             )
           }
@@ -108,7 +109,7 @@ export default class MainPage extends React.Component{
         </Carousel>
         </div>
 
-        <div className="well" id="notifications" hidden>
+        <div className="well" id="notifications" >
         <center><h2>Notifications</h2></center>
         <div>{this.showNotifications()}</div>
         </div>

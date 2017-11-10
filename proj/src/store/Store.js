@@ -65,16 +65,16 @@ class Store extends EventEmitter{
 		owner:"André"}]
     }
   }
-  
+
   isPieceNameAvailable(pieceName, author){
 	  var isAvailable=true;
 	  this.state.artPieces.forEach( piece => {
 	  if(piece.author === author && piece.name=== pieceName){
-		isAvailable=false;  
+		isAvailable=false;
 	  }
   })
   return isAvailable;}
-  
+
   notiOwner(answer,id, userParam){
 	 var userToCheck="";
 	 var idToCheck="";
@@ -86,17 +86,17 @@ class Store extends EventEmitter{
 				idToCheck = notification.iDUser;
 				userToCheck = notification.checkUser;
 				if(answer === "yes"){
-				notification.makeOwner = true;	
+				notification.makeOwner = true;
 				}
 				else{
 					notification.makeOwner = false;
 				}
 				notification.closedNot = true;
-				}  
+				}
 		  })
 		   }
 	  })
-	 
+
 	 if(answer === "yes"){
 	 this.state.users.forEach(user =>{
 		  if(userToCheck === user.username){
@@ -108,17 +108,18 @@ class Store extends EventEmitter{
 				if(piece.name === notification.pieceName && piece.author === userToCheck){
 					piece.availableToSell = "no"
 					piece.owner = userParam
+          alert(userParam)
 				}
 				})
-				
+
 				}
-			}  
+			}
 		  })
 		  }
 	 })
 	 }
   }
-  
+
   confirmTrans(id, userParam){
 	 var userToCheck="";
 	 var idToCheck="";
@@ -131,11 +132,11 @@ class Store extends EventEmitter{
 				notification.closedNot= true;
 				userToCheck= notification.checkUser;
 				idToCheck= notification.iDUser;
-			}  
+			}
 		  })
 		  }
 	  })
-	  
+
 	   this.state.users.forEach(user =>{
 		   if(user.username === userToCheck){
 		  user.notifications.map(notification =>{
@@ -146,17 +147,17 @@ class Store extends EventEmitter{
 					piece.owner = userToCheck
 				}
 				})
-				}  
+				}
 		  })
 		   }
 	  })
   }
-  
+
   answerBid(bidTo, bidfrom, answer, id)
   {   var userNotifications="";
 	  var piece="";
 	  var idUser="";
-	  
+
 	  this.state.users.forEach(user => {
 	  if(user.username === bidTo){
 		  user.notifications.map(notification =>{
@@ -170,11 +171,11 @@ class Store extends EventEmitter{
 		  userNotifications = user.notifications;
 	  }
 	  })
-	  
+
 	  this.state.users.forEach(user => {
 		if(user.username === bidfrom){
 			  idUser = user.notifications.length+1;
-			  
+
 			  userNotifications.push({
 			  type:"Confirm",
 			  closedNot:false,
@@ -184,8 +185,8 @@ class Store extends EventEmitter{
 			  id: userNotifications.length + 1,
 			  iDUser : idUser,
 			  checkUser : bidfrom
-		  })	  
-		  
+		  })
+
 			  user.notifications.push(
 			  {
 				  type:"AnswerBid",
@@ -196,11 +197,11 @@ class Store extends EventEmitter{
 				  makeOwner: false,
 				  iDUser : userNotifications.length,
 				  checkUser : bidTo,
-			  }) 
+			  })
 		  }
 	  })
   }
-  
+
   makeBid(value, from, to, pieceName){
 	  if(from === to){
 		  alert("You cannot buy your own piece!")
@@ -219,23 +220,23 @@ class Store extends EventEmitter{
 				type:"Bid",
 				id: user.notifications.length + 1
 				}
-				
+
 			)}
-		})		
+		})
 	  }
   }
-  
+
   getNotifications(username){
 	  var not=[];
 	  this.state.users.forEach(user => {
 		if(user.username === username){
-			
+
 			not = user.notifications;
-		}  
+		}
 	  })
 	  return not;
   }
-  
+
   emailExists(email){
 	  var exist=false;
 	  this.state.users.forEach(user => {
@@ -244,24 +245,24 @@ class Store extends EventEmitter{
 		  }
 	  })
   return exist;}
-  
+
   getUsers(){
     return this.state.users;
   }
   isArtist(){
     return this.state.logged.userType==="Artist"
   }
-  
+
   passwordCorrect(username,password){
 	  var verified=false;
-	  
+
 	  this.state.users.forEach( user => {
       if(username===user.username && password===user.password){
         verified=true;
       }
 	  })
   return verified;}
-  
+
  logIn(username,password){
     var logged=false;
 	  this.state.users.forEach( user => {
@@ -271,10 +272,10 @@ class Store extends EventEmitter{
         this.state.isLogged=logged;
 	    }
 	  })
-  this.emit("change");  
+  this.emit("change");
   return logged;
   }
-  
+
   logout(){
 	  if(this.state.isLogged === true){
 	  this.state.logged = "";
@@ -286,14 +287,14 @@ class Store extends EventEmitter{
 		  alert("You are not logged in!")
 	  }
   }
-  
+
   getUserLogged(){
     return this.state.logged
   }
   getLoggedUsername(){
     return this.state.logged.username
   }
-  
+
   usernameExists(username){
 	  var exist=false;
 	  this.state.users.forEach( user => {
@@ -302,7 +303,7 @@ class Store extends EventEmitter{
       }
     })
   return exist;}
-  
+
  registerUser(username, password, email, type){
       var u = {
         username:username,
@@ -314,13 +315,14 @@ class Store extends EventEmitter{
       this.state.users.push(u)
       this.state.logged=u
       this.emit("change")
-    
+
     this.emit("change");}
-  
+
   isLogged(){
     return this.state.isLogged;
   }
   registArtpiece(artPiece){
+    alert(JSON.stringify(artPiece))
     this.state.artPieces.push(artPiece)
   }
   getArtPiecesByKeyword(keyword){
@@ -341,7 +343,7 @@ class Store extends EventEmitter{
     })
     return a;
   }
-  
+
   getArtPiece(author, pieceName){
 	  var piece = "";
 	  this.state.artPieces.forEach(artPiece => {
@@ -350,7 +352,7 @@ class Store extends EventEmitter{
 	  }
 	  })
   return piece;}
-  
+
   handleAction(action) {
     switch (action.tag) {
       case "GET_USERS":
