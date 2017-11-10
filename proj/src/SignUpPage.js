@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import $ from 'jquery';
 import {Navbar, NavItem, Nav} from 'react-bootstrap';
 import Store from './store/Store';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import LogInScreen from './LogInScreen.js';
 import dispatcher from './dispatcher.js';
 

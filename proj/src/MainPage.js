@@ -17,7 +17,6 @@ export default class MainPage extends React.Component{
     this.logout = this.logout.bind(this);
   }
   notiOwner(answer,id,user){
-    alert(user)
     Store.notiOwner(answer,id,user);
   }
   logout()
@@ -38,18 +37,89 @@ export default class MainPage extends React.Component{
     alert(response)
     Store.answerBid(bidTo, bidFrom, response, id);
   }
-
-  showNotifications(){
+  showBids(){
     var notifications = Store.getNotifications(Store.getLoggedUsername());
-    for(var i= notifications.length-1; i>=0; i--){
+    var bids = []
+    notifications.map((notif)=> {
+      if(!notif.closedNot){
+        if(notif.type === "Bid"){
+          bids.push(notif)
+        }
+      }
+    })
+    //alert(JSON.stringify(bids))
+    return bids;
+  }
+  showAnswerBid(){
+    var notifications = Store.getNotifications(Store.getLoggedUsername());
+    var answerBids = [];
+    notifications.map((notif) => {
+      if(notif.type === "AnswerBid") {
+        if(notif.answer === "yes"){
+          answerBids.push(notif)
+        }
+    }
+    })
+    return answerBids
+  }
+  showConfirm(){
+    var notifications = Store.getNotifications(Store.getLoggedUsername());
+    var confirmed = [];
+    notifications.map((notif) => {
+      if(notif.type === "Confirm"){
+        confirmed.push(notif);
+      }
+    })
+    return confirmed
+  }
+  /*showNotifications(){
+    var notifications = Store.getNotifications(Store.getLoggedUsername());
+    notifications.map((notif) => {
+      if(!notif.closedNot){
+        if(notif.type === "Bid"){
+          alert(JSON.stringify(notif))
+          return(
+            <p>The user {notif.bidFrom} made a bid for the piece {notif.pieceName} offering {notif.bid} Euros. Accept?
+              <Link to="/" onClick={ () => {this.answer(Store.getLoggedUsername(),notif.bidfrom,"yes", notif.id)}}>Yes</Link>
+              <Link to="/" onClick={ () => {this.answer(Store.getLoggedUsername(),notif.bidfrom, "no", notif.id)}}>No</Link>
+            </p>
+          )
+        }
+        else if(notif.type === "AnswerBid") {
+          if(notif.answer === "yes"){
+            return(
+              <p>The Artist {notif.answerFrom} has accepted your offer. Do you wish that your name is displayed as the piece owner?
+                <Link to="/" onClick={ () => {this.notiOwner("yes", notif.id, Store.getLoggedUsername())}}> Yes </Link>
+                <Link to="/" onClick={ () => {this.notiOwner("no", notif.id, Store.getLoggedUsername())}}>No</Link>
+              </p>
+            )
+          }
+          else{
+            return(
+              <p>The Artist {notif.answerFrom} has rejected your offer.</p>)
+            }
+          }
+          else if(notif.type === "Confirm"){
+            return(
+              <p>Please click <Link to="/" onClick={ () => {this.confirmTrans(notif.id, Store.getLoggedUsername())}} >here </Link>
+                when the transaction from {notif.to} for the piece {notif.pieceName} has been confirmed.
+              </p>
+            )
+          }
+        }
+    })
+    /*for(var i= notifications.length-1; i>=0; i--){
+      var notifs = [];
       if(!notifications[i].closedNot){
         if(notifications[i].type === "Bid"){
+          var notifs = [];
           return(
             <p>The user {notifications[i].bidFrom} made a bid for the piece {notifications[i].pieceName} offering {notifications[i].bid} Euros. Accept? <Link to="/" onClick={ () => {this.answer(Store.getLoggedUsername(),notifications[i].bidfrom,"yes", notifications[i].id)}}>Yes</Link> <Link to="/" onClick={ () => {this.answer(Store.getLoggedUsername(),notifications[i].bidfrom, "no", notifications[i].id)}}>No</Link></p>
           )
         }
         else if(notifications[i].type === "AnswerBid") {
           if(notifications[i].answer === "yes"){
+
             return(
               <p>The Artist {notifications[i].answerFrom} has accepted your offer. Do you wish that your name is displayed as the piece owner?
                 <Link to="/" onClick={ () => {this.notiOwner("yes", notifications[i].id, Store.getLoggedUsername())}}>Yes</Link>
@@ -71,7 +141,7 @@ export default class MainPage extends React.Component{
           }
         }
       }
-    }
+    }*/
     searchArtist(e){
       this.setState({artist: e.target.value})
     }
@@ -102,7 +172,7 @@ export default class MainPage extends React.Component{
         <div className="col-md-6 col-md-push-3">
         <div className="well">
 
-        <Carousel autoplayInterval>
+        <Carousel autoplay>
         <img src="https://userscontent2.emaze.com/images/87d95bca-ba6d-420b-ba11-35cbb0f8ba25/97a4fd48d9f2949f83ab564085e2257b.jpg" alt=""/>
         <img src="https://media-cdn.urbanadventures.com/data/218/tour_928/c-fakepath-destination-main-image-miami.jpg" alt=""/>
         <img src="http://mediad.publicbroadcasting.net/p/michigan/files/styles/x_large/public/201411/DSC_0196.jpg" alt=""/>
@@ -111,7 +181,30 @@ export default class MainPage extends React.Component{
 
         <div className="well" id="notifications" >
         <center><h2>Notifications</h2></center>
-        <div>{this.showNotifications()}</div>
+        <div>{
+          this.showBids().map((notif)=> (
+                <p>The user {notif.bidFrom} made a bid for the piece {notif.pieceName} offering {notif.bid} Euros. Accept?
+                  <Link to="/" onClick={ () => {this.answer(Store.getLoggedUsername(),notif.bidfrom,"yes", notif.id)}}> Yes</Link>
+                  <Link to="/" onClick={ () => {this.answer(Store.getLoggedUsername(),notif.bidfrom, "no", notif.id)}}> No</Link>
+                </p>
+          ))
+        }
+        </div>
+        <div>{
+          this.showAnswerBid().map((notif) => (
+            <p>The Artist {notif.answerFrom} has accepted your offer. Do you wish that your name is displayed as the piece owner?
+              <Link to="/" onClick={ () => {this.notiOwner("yes", notif.id, Store.getLoggedUsername())}}> Yes </Link>
+              <Link to="/" onClick={ () => {this.notiOwner("no", notif.id, Store.getLoggedUsername())}}>No</Link>
+            </p>
+          ))
+        }</div>
+        <div>{
+          this.showConfirm().map((notif) => (
+            <p>Please click <Link to="/" onClick={ () => {this.confirmTrans(notif.id, Store.getLoggedUsername())}} >here </Link>
+              when the transaction from {notif.to} for the piece {notif.pieceName} has been confirmed.
+            </p>
+          ))
+        }</div>
         </div>
         </div>
         </div>

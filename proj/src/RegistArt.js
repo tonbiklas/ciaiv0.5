@@ -5,7 +5,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './styling/registArt.css'
 import moment from 'moment'
-import { Dropdown } from 'reactstrap';
 import Store from './store/Store';
 import dispatcher from './dispatcher';
 import {Navbar, NavItem, Nav} from 'react-bootstrap';
@@ -269,7 +268,7 @@ export default class RegistArt extends React.Component{
 
           </div>
 
-          
+
           <button type="button" className="form-control btn btn-primary" onClick={this.validateRegist}>Register</button>
           </div>
           </div>
