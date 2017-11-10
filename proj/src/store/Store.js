@@ -14,7 +14,16 @@ class Store extends EventEmitter{
           password:"bicicleta",
           email:"tonbiklas@gmail.com",
           userType:"Artist",
-          notifications:[]
+          notifications:[{
+			  bid:30,
+			  bidfrom: "Amida",
+			  showOwner: "",
+			  pieceName: "João Santos",
+			  type: "Bid",
+			  closedNot: false,
+			  answer: "",
+			  id:1
+		  }]
         },
         {
           username:"Amida",
@@ -32,7 +41,8 @@ class Store extends EventEmitter{
 	  date: new Date(),
 	  keywords: ["p", "r"],
 	  price: "10",
-		availableToSell: "yes"},
+		availableToSell: "yes",
+		owner:"André"},
 		{
 	  author: "tonbiklas",
       name:"João Santos",
@@ -41,7 +51,8 @@ class Store extends EventEmitter{
 	  date: new Date(),
 	  keywords: ["p", "r"],
 	  price: "20",
-		availableToSell: "yes"},
+		availableToSell: "yes",
+		owner:"tonbiklas"},
 		{
 	  author: "André",
       name:"João Santos",
@@ -50,19 +61,181 @@ class Store extends EventEmitter{
 	  date: new Date(),
 	  keywords: ["p", "r"],
 	  price: "30",
-		availableToSell: "yes"}]
+		availableToSell: "yes",
+		owner:"André"}]
     }
   }
-
+  
   isPieceNameAvailable(pieceName, author){
 	  var isAvailable=true;
 	  this.state.artPieces.forEach( piece => {
 	  if(piece.author === author && piece.name=== pieceName){
-		isAvailable=false;
+		isAvailable=false;  
 	  }
   })
   return isAvailable;}
+  
+  notiOwner(answer,id, userParam){
+	 var userToCheck="";
+	 var idToCheck="";
 
+	  this.state.users.forEach(user =>{
+		   if(user.username === userParam){
+		  user.notifications.map(notification =>{
+			if(notification.id === id){
+				idToCheck = notification.iDUser;
+				userToCheck = notification.checkUser;
+				if(answer === "yes"){
+				notification.makeOwner = true;	
+				}
+				else{
+					notification.makeOwner = false;
+				}
+				notification.closedNot = true;
+				}  
+		  })
+		   }
+	  })
+	 
+	 if(answer === "yes"){
+	 this.state.users.forEach(user =>{
+		  if(userToCheck === user.username){
+		  user.notifications.map(notification =>{
+			if(notification.id === idToCheck){
+				if(notification.answer === "yes"){
+
+				this.state.artPieces.map(piece => {
+				if(piece.name === notification.pieceName && piece.author === userToCheck){
+					piece.availableToSell = "no"
+					piece.owner = userParam
+				}
+				})
+				
+				}
+			}  
+		  })
+		  }
+	 })
+	 }
+  }
+  
+  confirmTrans(id, userParam){
+	 var userToCheck="";
+	 var idToCheck="";
+
+	 this.state.users.forEach(user =>{
+		  if(userParam === user.username){
+		  user.notifications.map(notification =>{
+			if(notification.id === id){
+				notification.answer = "yes";
+				notification.closedNot= true;
+				userToCheck= notification.checkUser;
+				idToCheck= notification.iDUser;
+			}  
+		  })
+		  }
+	  })
+	  
+	   this.state.users.forEach(user =>{
+		   if(user.username === userToCheck){
+		  user.notifications.map(notification =>{
+			if(notification.id === idToCheck && notification.makeOwner === true){
+				this.state.artPieces.map(piece => {
+				if(piece.name === notification.pieceName && piece.author === userParam){
+					piece.availableToSell = "no"
+					piece.owner = userToCheck
+				}
+				})
+				}  
+		  })
+		   }
+	  })
+  }
+  
+  answerBid(bidTo, bidfrom, answer, id)
+  {   var userNotifications="";
+	  var piece="";
+	  var idUser="";
+	  
+	  this.state.users.forEach(user => {
+	  if(user.username === bidTo){
+		  user.notifications.map(notification =>{
+		  if(notification.id === id)
+		  {
+			  piece= notification.pieceName
+			  notification.answer= answer
+			  notification.closedNot = true
+		  }
+		  })
+		  userNotifications = user.notifications;
+	  }
+	  })
+	  
+	  this.state.users.forEach(user => {
+		if(user.username === bidfrom){
+			  idUser = user.notifications.length+1;
+			  
+			  userNotifications.push({
+			  type:"Confirm",
+			  closedNot:false,
+			  answer:"",
+			  to: bidfrom,
+			  pieceName : piece,
+			  id: userNotifications.length + 1,
+			  iDUser : idUser,
+			  checkUser : bidfrom
+		  })	  
+		  
+			  user.notifications.push(
+			  {
+				  type:"AnswerBid",
+				  pieceName: piece,
+				  answer: answer,
+				  closedNot: false,
+				  id: user.notifications.length + 1,
+				  makeOwner: false,
+				  iDUser : userNotifications.length,
+				  checkUser : bidTo,
+			  }) 
+		  }
+	  })
+  }
+  
+  makeBid(value, from, to, pieceName){
+	  if(from === to){
+		  alert("You cannot buy your own piece!")
+	  }
+	  else{
+		this.state.users.forEach( user => {
+        if(user.username === to){
+			user.notifications.push(
+			{
+				bidfrom: from,
+				bid: value,
+				showOwner: "",
+				pieceName: "",
+				answer: "",
+				closedNot:false,
+				type:"Bid",
+				id: user.notifications.length + 1
+				}
+				
+			)}
+		})		
+	  }
+  }
+  
+  getNotifications(username){
+	  var not=[];
+	  this.state.users.forEach(user => {
+		if(user.username === username){
+			
+			not = user.notifications;
+		}  
+	  })
+	  return not;
+  }
+  
   emailExists(email){
 	  var exist=false;
 	  this.state.users.forEach(user => {
@@ -71,36 +244,37 @@ class Store extends EventEmitter{
 		  }
 	  })
   return exist;}
-
+  
   getUsers(){
     return this.state.users;
   }
   isArtist(){
     return this.state.logged.userType==="Artist"
   }
-
+  
   passwordCorrect(username,password){
 	  var verified=false;
-
+	  
 	  this.state.users.forEach( user => {
       if(username===user.username && password===user.password){
         verified=true;
       }
 	  })
-  return verified;
-  }
-  logIn(username,password){
+  return verified;}
+  
+ logIn(username,password){
     var logged=false;
 	  this.state.users.forEach( user => {
-      if(username===user.username && password===user.password){
+      if(username.trim()===user.username && password===user.password){
         this.state.logged = user;
         logged=true;
         this.state.isLogged=logged;
 	    }
 	  })
-    return logged;
-    this.emit("change");
+  this.emit("change");  
+  return logged;
   }
+  
   logout(){
 	  if(this.state.isLogged === true){
 	  this.state.logged = "";
@@ -112,23 +286,23 @@ class Store extends EventEmitter{
 		  alert("You are not logged in!")
 	  }
   }
-
+  
   getUserLogged(){
     return this.state.logged
   }
   getLoggedUsername(){
     return this.state.logged.username
   }
-
+  
   usernameExists(username){
 	  var exist=false;
 	  this.state.users.forEach( user => {
-      if(username===user.username){
+      if(username.trim()===user.username){
         exist=true;
       }
     })
   return exist;}
-
+  
  registerUser(username, password, email, type){
       var u = {
         username:username,
@@ -140,9 +314,9 @@ class Store extends EventEmitter{
       this.state.users.push(u)
       this.state.logged=u
       this.emit("change")
-
+    
     this.emit("change");}
-
+  
   isLogged(){
     return this.state.isLogged;
   }
@@ -167,7 +341,7 @@ class Store extends EventEmitter{
     })
     return a;
   }
-
+  
   getArtPiece(author, pieceName){
 	  var piece = "";
 	  this.state.artPieces.forEach(artPiece => {
@@ -176,14 +350,14 @@ class Store extends EventEmitter{
 	  }
 	  })
   return piece;}
-
+  
   handleAction(action) {
     switch (action.tag) {
       case "GET_USERS":
         this.getUsers();
         break;
       case "LOG_IN":
-        return this.logIn(action.username,action.password)
+        this.logIn(action.username,action.password)
         break;
       case "GET_USER_LOGGED":
         this.getUserLogged();
@@ -206,19 +380,21 @@ class Store extends EventEmitter{
       case "GET_ART_BY_KEYWORD":
         this.getArtPiecesByKeyword(action.keywords);
         break;
-	    case "LOG_OUT":
-		    this.logout();
-		    break;
-		  case "GET_ARTPIECE_PNAME":
-		    this.getArtPiece(action.author, action.pieceName);
-		    break;
+	  case "LOG_OUT":
+		this.logout();
+		break;
+		case "GET_ARTPIECE_PNAME":
+		this.getArtPiece(action.author, action.pieceName);
+		break;
+		case "MAKE_BID":
+		this.makeBid(action.value, action.from, action.to, action.makeOwner)
+		break;
       default:
-
     }
   }
 }
 
-const store = new Store;
+const store = new Store();
 Dispatcher.register(store.handleAction.bind(store))
 
 export default store;

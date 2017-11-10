@@ -84,7 +84,7 @@ export default class LogInScreen extends React.Component {
             <div className="imgcontainer">
               <img src="images/foto-da-capa.jpg" alt=""/>
             </div>
-			<form>
+			      <form>
             <div className="well">
               <div className="form-group">
                 <input className="form-control" placeholder="Username" onChange={this.changeUsername} value={this.state.usernameText} required/>
@@ -98,7 +98,7 @@ export default class LogInScreen extends React.Component {
               </Link>
             </div>
             </div>
-     </form>
+            </form>
           <div>
             <div align="center">
               <Link to="/forgotpass">Forgot your password? </Link>

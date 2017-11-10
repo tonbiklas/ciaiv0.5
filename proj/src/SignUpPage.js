@@ -154,11 +154,11 @@ export default class SignUpPage extends React.Component {
               </div>
             </form>
 
-			<select id="selectUserType" onChange={this.userTypeChange}>
-			<option>Select User Type</option>
-            <option value="User">User</option>
-            <option value="Artist">Artist</option>
-			</select>
+			<center><select className="btn btn-primary dropdown-toggle " id="selectUserType" onChange={this.userTypeChange}>
+        <option value="" selected disabled hidden>User type</option>
+        <option value="User">User</option>
+        <option value="Artist">Artist</option>
+			</select></center>
 
           </div>
           <div className="form-group">
