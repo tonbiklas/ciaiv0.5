@@ -58,6 +58,7 @@ export default class ArtPiece extends React.Component{
       }
       else{
         this.setState({bid: e.target.value})
+        Store.makeBid(this.state.bid, this.state.logged.username, this.state.author, this.state.name)
         alert("A message was sent to the owner of the art piece.")
       }
     }

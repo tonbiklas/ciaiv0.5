@@ -1,0 +1,24 @@
+/*<div>{
+  this.showBids().map((notif)=> (
+        <p>The user {notif.bidFrom} made a bid for the piece {notif.pieceName} offering {notif.bid} Euros. Accept?
+          <Link to="/" onClick={ () => {this.answer(Store.getLoggedUsername(),notif.bidfrom,"yes", notif.id)}}> Yes</Link>
+          <Link to="/" onClick={ () => {this.answer(Store.getLoggedUsername(),notif.bidfrom, "no", notif.id)}}> No</Link>
+        </p>
+  ))
+}
+</div>
+<div>{
+  this.showAnswerBid().map((notif) => (
+    <p>The Artist {notif.answerFrom} has accepted your offer. Do you wish that your name is displayed as the piece owner?
+      <Link to="/" onClick={ () => {this.notiOwner("yes", notif.id, Store.getLoggedUsername())}}> Yes </Link>
+      <Link to="/" onClick={ () => {this.notiOwner("no", notif.id, Store.getLoggedUsername())}}>No</Link>
+    </p>
+  ))
+}</div>
+<div>{
+  this.showConfirm().map((notif) => (
+    <p>Please click <Link to="/" onClick={ () => {this.confirmTrans(notif.id, Store.getLoggedUsername())}} >here </Link>
+      when the transaction from {notif.to} for the piece {notif.pieceName} has been confirmed.
+    </p>
+  ))
+}</div>

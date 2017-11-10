@@ -4,6 +4,12 @@
 
 3. Um utilizador faz loggin na aplicação através do seu e-mail e password.
 
+4. Um utilizador escolhe uma peça de arte e envia um pedido de compra ao artista, dando um valor igual ou acima do preço definido pelo artista (se este existir). 
+
+4.1 Um segundo utilizador escolhe a mesma peça de arte e envia um pedido de compra ao artista, dando um valor igual ou acima do preço definido pelo artista.
+
+4.2 O artista inicia sessão e vê ambas as notificações de oferta de compra por parte dos outros dois diferentes utilizadores
+
 5. Um artista faz loggin e adiciona uma peça de arte (multimedia) à sua galeria virtual, dando para cada uma delas: um nome, informações técnicas sobre a peça, um texto de descrição, disponibilidade para venda, preço(opcional), palavras-chave que devem descrever a peça e um url para a peça de arte.
 
 5.1 O artista vê a nova peça de arte na sua galeria.

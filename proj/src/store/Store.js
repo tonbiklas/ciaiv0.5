@@ -31,13 +31,6 @@ class Store extends EventEmitter{
           email:"amida@gmail.com",
           userType:"User",
           notifications:[]
-        },
-        {
-          username:"a",
-          password:"a",
-          email:"amida@gmail.com",
-          userType:"User",
-          notifications:[]
         }
       ],
       artPieces: [{
@@ -110,6 +103,7 @@ class Store extends EventEmitter{
 		  user.notifications.map(notification =>{
 			if(notification.id === idToCheck){
 				if(notification.answer === "yes"){
+
 				this.state.artPieces.map(piece => {
 				if(piece.name === notification.pieceName && piece.author === userToCheck){
 					piece.availableToSell = "no"
@@ -327,7 +321,6 @@ class Store extends EventEmitter{
     return this.state.isLogged;
   }
   registArtpiece(artPiece){
-    alert(JSON.stringify(artPiece))
     this.state.artPieces.push(artPiece)
   }
   getArtPiecesByKeyword(keyword){
