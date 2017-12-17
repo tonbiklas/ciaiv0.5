@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 
 import Dispatcher from '../dispatcher.js'
+import $ from 'jquery'
 
 class Store extends EventEmitter{
   constructor(){
@@ -8,273 +9,219 @@ class Store extends EventEmitter{
     this.state={
       logged:"",
       isLogged:false,
-      users:[
-        {
-          username:"tonbiklas",
-          password:"bicicleta",
-          email:"tonbiklas@gmail.com",
-          userType:"Artist",
-          notifications:[{
-			  bid:30,
-			  bidfrom: "Amida",
-			  showOwner: "",
-			  pieceName: "João Santos",
-			  type: "Bid",
-			  closedNot: false,
-			  answer: "",
-			  id:1
-		  }]
-        },
-        {
-          username:"Amida",
-          password:"jorjao",
-          email:"amida@gmail.com",
-          userType:"User",
-          notifications:[]
-        }
-      ],
-      artPieces: [{
-	  author: "André",
-      name:"João Santos",
-      description:"This is the description of this art piece",
-	  artMultimedia: ["images/foto-da-capa.jpg", "images/foto-da-capa.jpg"],
-	  date: new Date(),
-	  keywords: ["p", "r"],
-	  price: "10",
-		availableToSell: "yes",
-		owner:"André"},
-		{
-	  author: "tonbiklas",
-      name:"João Santos",
-      description:"This is the description of this art piece",
-	  artMultimedia: ["images/foto-da-capa.jpg", "images/foto-da-capa.jpg"],
-	  date: new Date(),
-	  keywords: ["p", "r"],
-	  price: "20",
-		availableToSell: "yes",
-		owner:"tonbiklas"},
-		{
-	  author: "André",
-      name:"João Santos",
-      description:"This is the description of this art piece",
-	  artMultimedia: ["images/foto-da-capa.jpg", "images/foto-da-capa.jpg"],
-	  date: new Date(),
-	  keywords: ["p", "r"],
-	  price: "30",
-		availableToSell: "yes",
-		owner:"André"}]
+      users:[],
+      artPieces: []
     }
   }
-
+  
+  sendEmail(username){
+	  
+	  $.ajax({
+          async: true,
+          type: 'POST',
+          url: "http://localhost:8080/users/forgotPassword/"+username+"/",
+          success: function(data) {
+		  }
+		  })
+  }
+  
+  isUserEmail(username, email){
+	  var verify=false;
+	   $.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/users/isuseremail/"+username+"/"+email+"/",
+     success: function(data) {
+          verify=data;
+   }
+   })
+	  
+  return verify;}
+  
   isPieceNameAvailable(pieceName, author){
-	  var isAvailable=true;
-	  this.state.artPieces.forEach( piece => {
-	  if(piece.author === author && piece.name=== pieceName){
-		isAvailable=false;
-	  }
-  })
+	var isAvailable=true;
+	$.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/artpieces/"+pieceName+"/"+author+"/",
+     success: function(data) {
+         isAvailable=false;
+     }
+});
   return isAvailable;}
-
-  notiOwner(answer,id, userParam){
-	 var userToCheck="";
-	 var idToCheck="";
-
-	  this.state.users.forEach(user =>{
-		   if(user.username === userParam){
-		  user.notifications.map(notification =>{
-			if(notification.id === id){
-				idToCheck = notification.iDUser;
-				userToCheck = notification.checkUser;
-				if(answer === "yes"){
-				notification.makeOwner = true;
-				}
-				else{
-					notification.makeOwner = false;
-				}
-				notification.closedNot = true;
-				}
-		  })
-		   }
-	  })
-
-	 if(answer === "yes"){
-	 this.state.users.forEach(user =>{
-		  if(userToCheck === user.username){
-		  user.notifications.map(notification =>{
-			if(notification.id === idToCheck){
-				if(notification.answer === "yes"){
-
-				this.state.artPieces.map(piece => {
-				if(piece.name === notification.pieceName && piece.author === userToCheck){
-					piece.availableToSell = "no"
-					piece.owner = userParam
-				}
-				})
-
-				}
-			}
-		  })
+  
+  notiOwner(answer,id, pieceName, author, owner){
+  
+	  $.ajax({
+          async: false,
+          type: 'POST',
+          url: "http://localhost:8080/notifications/notiowner/"+id+"/"+answer+"/",
+          success: function(data) {
+			  answer=data;
 		  }
-	 })
-	 }
-  }
-
-  confirmTrans(id, userParam){
-	 var userToCheck="";
-	 var idToCheck="";
-
-	 this.state.users.forEach(user =>{
-		  if(userParam === user.username){
-		  user.notifications.map(notification =>{
-			if(notification.id === id){
-				notification.answer = "yes";
-				notification.closedNot= true;
-				userToCheck= notification.checkUser;
-				idToCheck= notification.iDUser;
-			}
 		  })
+           
+		  if(answer === "changeOwner"){
+		  $.ajax({
+          async: false,
+          type: 'POST',
+          url: "http://localhost:8080/artpieces/changeOwner/"+pieceName+"/"+author+"/"+owner+"/",
+          success: function(data) {
 		  }
-	  })
-
-	   this.state.users.forEach(user =>{
-		   if(user.username === userToCheck){
-		  user.notifications.map(notification =>{
-			if(notification.id === idToCheck && notification.makeOwner === true){
-				this.state.artPieces.map(piece => {
-				if(piece.name === notification.pieceName && piece.author === userParam){
-					piece.availableToSell = "no"
-					piece.owner = userToCheck
-				}
-				})
-				}
 		  })
-		   }
-	  })
+			  }
+			  else
+		  if(answer === "notToSale"){
+          $.ajax({
+          async: false,
+          type: 'POST',
+          url: "http://localhost:8080/notifications/notToSale/"+pieceName+"/"+author+"/",
+          success: function(data) {
+		  }
+		  })		  
+				  }		  
   }
-
+  
+  confirmTrans(id, pieceName, author, owner){
+   var answer = "";
+	  $.ajax({
+          async: false,
+          type: 'POST',
+          url: "http://localhost:8080/notifications/confirmTrans/"+id+"/",
+          success: function(data) {
+		  }
+		  })
+		  
+          if(answer === "changeOwner"){
+		  $.ajax({
+          async: false,
+          type: 'POST',
+          url: "http://localhost:8080/artpieces/changeOwner/"+pieceName+"/"+author+"/"+owner+"/",
+          success: function(data) {
+		  }
+		  })
+			  }
+			  else
+		  if(answer === "notToSale"){
+          $.ajax({
+          async: false,
+          type: 'POST',
+          url: "http://localhost:8080/notifications/notToSale/"+pieceName+"/"+author+"/",
+          success: function(data) {
+		  }
+		  })		  
+				  }		 
+		  
+  }
+  
   answerBid(bidTo, bidfrom, answer, id)
-  {   var userNotifications="";
-	  var piece="";
-	  var idUser="";
-
-	  this.state.users.forEach(user => {
-	  if(user.username === bidTo){
-		  user.notifications.map(notification =>{
-		  if(notification.id === id)
-		  {
-			  piece= notification.pieceName
-			  notification.answer= answer
-			  notification.closedNot = true
+  {   
+	    $.ajax({
+          async: false,
+          type: 'POST',
+          url: "http://localhost:8080/notifications/answerbid/"+bidTo+"/"+bidfrom+"/"+answer+"/"+id+"/",
+          success: function(data) {
 		  }
-		  })
-		  userNotifications = user.notifications;
-	  }
-	  })
-
-	  this.state.users.forEach(user => {
-		if(user.username === bidfrom){
-			  idUser = user.notifications.length+1;
-
-			  userNotifications.push({
-			  type:"Confirm",
-			  closedNot:false,
-			  answer:"",
-			  to: bidfrom,
-			  pieceName : piece,
-			  id: userNotifications.length + 1,
-			  iDUser : idUser,
-			  checkUser : bidfrom
-		  })
-
-			  user.notifications.push(
-			  {
-				  type:"AnswerBid",
-				  pieceName: piece,
-				  answer: answer,
-				  closedNot: false,
-				  id: user.notifications.length + 1,
-				  makeOwner: false,
-				  iDUser : userNotifications.length,
-				  checkUser : bidTo,
-			  })
-		  }
-	  })
+		  })	
   }
-
-  makeBid(value, from, to, pieceName){
-	  if(from === to){
+  
+  makeBid(value, from, bidTo, pieceName){
+	  if(from === bidTo){
 		  alert("You cannot buy your own piece!")
 	  }
 	  else{
-		this.state.users.forEach( user => {
-        if(user.username === to){
-			user.notifications.push(
-			{
-				bidfrom: from,
+		  var u ={
+			    bidFrom: from,
 				bid: value,
 				showOwner: "",
-				pieceName: "",
+				pieceName: pieceName,
 				answer: "",
 				closedNot:false,
 				type:"Bid",
-				id: user.notifications.length + 1
-				}
-
-			)}
-		})
+				to: bidTo,
+				pieceOwner: bidTo}
+		  
+		  $.ajax({
+          async: false,
+          type: 'POST',
+          url: "http://localhost:8080/notifications",
+	      contentType: 'application/json; charset=utf-8',
+	      data: JSON.stringify(u),
+          success: function(data) {
+			  
+		  }
+		  })		
 	  }
   }
-
+  
   getNotifications(username){
-	  var not=[];
-	  this.state.users.forEach(user => {
-		if(user.username === username){
-
-			not = user.notifications;
-		}
-	  })
-	  return not;
+	 var not=[];
+	 $.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/notifications/userNot/"+username+"/",
+     success: function(data) {
+          not=data;}
+   })
+   return not;
   }
-
+  
   emailExists(email){
-	  var exist=false;
-	  this.state.users.forEach(user => {
-		  if(user.email === email){
-			  exist=true;
-		  }
-	  })
+	 var exist=false;
+	 $.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/users/emailExists/"+email+"/",
+     success: function(data) {
+          exist=true;
+   }
+   })
   return exist;}
-
-  getUsers(){
-    return this.state.users;
+  
+getUsers(){
+var users="";	 
+	 $.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/users",
+     success: function(data) {
+          users=data;
+   }
+   })
+    return users;
   }
+  
   isArtist(){
     return this.state.logged.userType==="Artist"
   }
-
-  passwordCorrect(username,password){
+  
+  passwordCorrect(username,userPassword){
 	  var verified=false;
-
-	  this.state.users.forEach( user => {
-      if(username===user.username && password===user.password){
-        verified=true;
-      }
-	  })
+	   $.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/users/checkPassword/"+username+"/"+userPassword+"/",
+     success: function(data) {
+          verified=data;
+   }
+   })
   return verified;}
-
- logIn(username,password){
-    var logged=false;
-	  this.state.users.forEach( user => {
-      if(username.trim()===user.username && password===user.password){
-        this.state.logged = user;
-        logged=true;
-        this.state.isLogged=logged;
-	    }
-	  })
-  this.emit("change");
-  return logged;
+  
+logIn(username,password){
+this.state.isLogged=true;
+var temp="";
+ $.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/users/"+username+"/",
+     success: function(data) {
+          temp=data;
+   }
+   })
+   this.state.logged=temp;
+  this.emit("change");  
   }
-
+  
   logout(){
 	  if(this.state.isLogged === true){
 	  this.state.logged = "";
@@ -286,71 +233,99 @@ class Store extends EventEmitter{
 		  alert("You are not logged in!")
 	  }
   }
-
+  
   getUserLogged(){
-    return this.state.logged
+    return this.state.logged;
   }
   getLoggedUsername(){
-    return this.state.logged.username
+    return this.state.logged.username;
   }
-
+  
   usernameExists(username){
-	  var exist=false;
-	  this.state.users.forEach( user => {
-      if(username.trim()===user.username){
-        exist=true;
-      }
-    })
+	 var exist=false;
+	 $.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/users/"+username+"/",
+     success: function(data) {
+          exist=true;
+   }
+   })
   return exist;}
-
+  
  registerUser(username, password, email, type){
       var u = {
         username:username,
         password:password,
         email:email,
-        type:type,
-        notifications:[]
+        userType:type
       }
-      this.state.users.push(u)
-      this.state.logged=u
-      this.emit("change")
-
+   $.ajax({
+     async: false,
+     type: 'POST',
+     url: "http://localhost:8080/users",
+	contentType: 'application/json; charset=utf-8',
+	data: JSON.stringify(u),
+     success: function(data) {
+   }
+   })
     this.emit("change");}
-
+  
   isLogged(){
     return this.state.isLogged;
   }
-  registArtpiece(artPiece){
+  
+  registArtpiece(artPiece, pieceName, author){
+	  
+	   $.ajax({
+     async: false,
+     type: 'POST',
+     url: "http://localhost:8080/artpieces/"+pieceName+"/"+author+"/",
+	contentType: 'application/json; charset=utf-8',
+	data: JSON.stringify(artPiece),
+     success: function(data) {
+   }
+   })
+   
     this.state.artPieces.push(artPiece)
   }
   getArtPiecesByKeyword(keyword){
-    var a = [];
-    this.state.artPieces.forEach(artPiece => {
-      artPiece.keywords.forEach(kw => {
-        if(keyword===kw)
-          a.push(artPiece)
-      })
-    })
-    return a;
+   var pieces="";
+   $.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/artpieces/keywords/"+keyword+"/",
+     success: function(data) {
+          pieces = data;
+   }
+   })
+   return pieces;
   }
-  getArtPiecesByAuthor(aut){
-    var a = [];
-    this.state.artPieces.forEach(artPiece => {
-      if(artPiece.author===aut)
-        a.push(artPiece)
-    })
-    return a;
+  getArtPiecesByAuthor(author){
+   var pieces="";
+   $.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/artpieces/"+author+"/",
+     success: function(data) {
+          pieces = data;
+   }
+   })
+   return pieces;
   }
-
+  
   getArtPiece(author, pieceName){
-	  var piece = "";
-	  this.state.artPieces.forEach(artPiece => {
-	  if(artPiece.author === author && artPiece.name === pieceName){
-		  piece=artPiece;
-	  }
-	  })
-  return piece;}
-
+	var piece="";
+	$.ajax({
+     async: false,
+     type: 'GET',
+     url: "http://localhost:8080/artpieces/"+pieceName+"/"+author+"/",
+     success: function(data) {
+          piece= data;
+     }
+});
+return piece;}
+  
   handleAction(action) {
     switch (action.tag) {
       case "GET_USERS":
@@ -366,7 +341,7 @@ class Store extends EventEmitter{
         this.getLoggedUsername();
         break;
       case "REGISTER_USER":
-        this.registerUser(action.username, action.password, action.emai, action.type)
+        this.registerUser(action.username, action.password, action.email, action.type)
         break;
       case "IS_LOGGED":
         this.isLogged();

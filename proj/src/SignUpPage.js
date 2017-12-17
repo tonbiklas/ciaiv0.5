@@ -3,12 +3,10 @@ import {Link} from 'react-router-dom';
 import $ from 'jquery';
 import {Navbar, NavItem, Nav} from 'react-bootstrap';
 import Store from './store/Store';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import LogInScreen from './LogInScreen.js';
 import dispatcher from './dispatcher.js';
 
 export default class SignUpPage extends React.Component {
-
+  
   constructor(props){
     super(props);
     this.state={
@@ -26,12 +24,13 @@ export default class SignUpPage extends React.Component {
     this.selectUserType = this.selectUserType.bind(this);
     this.processSigningUp = this.processSigningUp.bind(this);
 	this.userTypeChange = this.userTypeChange.bind(this);
+	this.processSigningUp2 = this.processSigningUp2.bind(this);
   }
-
+  
   userTypeChange(e){
 	  this.setState({typeUser: $("#selectUserType option:selected").text()})
   }
-
+  
   changeUsername(e){
     this.setState({usernameText:e.target.value})
   }
@@ -47,46 +46,76 @@ export default class SignUpPage extends React.Component {
   selectUserType(e){
     this.setState({typeUser:e.target.value})
   }
-  processSigningUp(e){
+  
+   processSigningUp2(e){
+	  if(this.state.usernameText === "")
+	  {
+		  e.preventDefault()
+	  }
+	  else
+		  if(this.state.passwordText === "")
+		  {
+			  e.preventDefault()
+		  }
+		  else
+			  if(this.state.passwordConfirm === "")
+			  {
+				  e.preventDefault()
+			  }
+			  else
+				  if(this.state.passwordConfirm !==this.state.passwordText)
+				  {  
+					e.preventDefault()
+				  }
+			  else
+				  if(this.state.emailText === "")
+				  {
+					  e.preventDefault()
+				  }
+				  else 
+					  if(this.state.typeUser === "" || this.state.typeUser ==="Select User Type")
+					  {
+						  e.preventDefault()
+					  }
+					  else
+						  if(Store.usernameExists(this.state.usernameText)){
+							  e.preventDefault()
+						  }				  
+					  }
+  
+  processSigningUp(){
 	  if(this.state.usernameText === "")
 	  {
 		  alert("Please choose a username.")
-      e.preventDefault()
 	  }
 	  else
 		  if(this.state.passwordText === "")
 		  {
 			  alert("Please choose a password.")
-        e.preventDefault()
 		  }
 		  else
 			  if(this.state.passwordConfirm === "")
 			  {
 				  alert("Please confirm your password.")
-          e.preventDefault()
 			  }
 			  else
 				  if(this.state.passwordConfirm !==this.state.passwordText)
 				  {
-					alert("The password confirmation is not correct.")
-          e.preventDefault()
+					alert("The password confirmation is not correct.")  
 				  }
 			  else
 				  if(this.state.emailText === "")
 				  {
 					  alert("Please choose an E-mail.")
-            e.preventDefault()
 				  }
-				  else
+				  else 
 					  if(this.state.typeUser === "" || this.state.typeUser ==="Select User Type")
 					  {
 						  alert("Please choose your User Type.")
-              e.preventDefault()
 					  }
 					  else
 						  if(Store.usernameExists(this.state.usernameText)){
 							  alert("Username already exists!")
-                e.preventDefault()
 						  }
 						  else
 						  {
@@ -98,18 +127,13 @@ export default class SignUpPage extends React.Component {
                               email: this.state.emailText,
                               type: this.state.typeUser
                               })
-
-                      return (<Switch>
-                              <Route path="/login" component={LogInScreen} />
-                              <Redirect from="/signup" to="/login" push />
-                              </Switch> )
-						  }
+						  }							  
 					  }
-
+ 
   render(){
     return (
       <div className="container-fluid">
-
+	  
 	  <Navbar staticTop >
         <Navbar.Header>
           <Navbar.Brand>
@@ -123,7 +147,7 @@ export default class SignUpPage extends React.Component {
               <NavItem eventKey={1}><Link to="/login">Log In</Link></NavItem>
             </Nav>
       </Navbar>
-
+	  
         <div className="col-md-6 col-md-push-3">
           <center><h2>Signing Up</h2></center>
           <div className="well">
@@ -153,19 +177,19 @@ export default class SignUpPage extends React.Component {
                 </div>
               </div>
             </form>
-
+			
 			<center><select className="btn btn-primary dropdown-toggle " id="selectUserType" onChange={this.userTypeChange}>
         <option value="" selected disabled hidden>User type</option>
         <option value="User">User</option>
         <option value="Artist">Artist</option>
 			</select></center>
-
+			
           </div>
           <div className="form-group">
-            <Link to="/" onClick={this.processSigningUp}>
-              <button type="button" className="btn btn-primary form-control">Sign up</button>
-            </Link>
-          </div>
+		  <Link to="/login" onClick={this.processSigningUp}>
+            <button type="button" className="btn btn-primary form-control" onClick={this.processSigningUp2}>Sign up</button>
+          </Link>         
+		 </div>
         </div>
       </div>
 

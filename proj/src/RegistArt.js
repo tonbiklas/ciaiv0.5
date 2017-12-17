@@ -41,6 +41,7 @@ export default class RegistArt extends React.Component{
     this.showPrice = this.showPrice.bind(this);
     this.changeAvailability = this.changeAvailability.bind(this);
     this.logout= this.logout.bind(this);
+	this.validateRegist2 = this.validateRegist2.bind(this);
   }
 
   logout()
@@ -80,7 +81,7 @@ export default class RegistArt extends React.Component{
       alert("Please specify the creation date for this piece!")
     }
     else
-    if(this.state.availableToSell === "" || this.state.availableToSell === "Is it available for sale?"){
+    if(this.state.availableToSell === ""){
       alert("Please indicate if this piece will be available for sale!")
     }
     else
@@ -89,20 +90,56 @@ export default class RegistArt extends React.Component{
     }
     else{
       alert("This piece has been added to your gallery.")
-      dispatcher.dispatch({tag:"REGISTER_ARTPIECE", artPiece: {
-        author: this.state.author,
-        name:this.state.name,
+      
+		var artPiece= {
+		owner: this.state.author,
         description:this.state.description,
         artMultimedia: this.state.artMultimedia,
         date: this.state.date,
         keywords: this.state.keywords,
         price: this.state.price,
         availableToSell: this.state.availableToSell
-      }
-    }) }
-
+      };
+	   Store.registArtpiece(artPiece, this.state.name, this.state.author);
+	 }
   }
 
+  validateRegist2(e){
+	  if(!Store.isPieceNameAvailable(this.state.name, this.state.author)){
+		alert("rip pieceName")
+       e.preventDefault()
+    }
+    else
+    if(this.state.description === ""){
+	   e.preventDefault()
+    }
+    else
+    if(this.state.keywords.length === 0)
+    {
+       e.preventDefault()
+    }
+    else
+    if(this.state.artMultimedia.length === 0){
+       e.preventDefault()
+    }
+    else
+    if(this.state.date ===""){
+       e.preventDefault()
+    }
+    else
+    if(this.state.availableToSell === ""){
+      e.preventDefault()
+    }
+    else
+		if(this.state.name === ""){
+	  e.preventDefault()
+    }
+    
+	else{
+		this.validateRegist();
+	}
+  }
+  
   isItAvailable(e){
     this.setState({availableToSell: e.target.value})
   }
@@ -130,17 +167,27 @@ export default class RegistArt extends React.Component{
   }
 
   insertKeyword(e){
+	  if(this.state.currentKeyword === ""){
+		  alert("Please write a keyword.")
+	  }
+	  else{
     this.setState({
       keywords: this.state.keywords.concat([this.state.currentKeyword]),
       currentKeyword: ""
     });
+	  }
   }
 
   insertMultimedia(e){
+	  if(this.state.currentURL === ""){
+	  alert("Please write a Link.")
+	  }
+	  else{
     this.setState({
       artMultimedia: this.state.artMultimedia.concat([this.state.currentURL]),
       currentURL: ""
     });
+	  }
   }
 
   multimediaListAppear(){
@@ -268,9 +315,10 @@ export default class RegistArt extends React.Component{
 
           </div>
 
-
-          <button type="button" className="form-control btn btn-primary" onClick={this.validateRegist}>Register</button>
-          </div>
+          <Link to="/" onClick={this.validateRegist2}>
+          <button type="button" className="form-control btn btn-primary">Register</button>
+          </Link>
+		  </div>
           </div>
 
           </div>

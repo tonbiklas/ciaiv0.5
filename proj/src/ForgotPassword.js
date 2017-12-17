@@ -7,40 +7,63 @@ export default class ForgotPassword extends React.Component{
   constructor(props){
     super(props);
     this.state={
-      email:"",
-      confirmEmail:""
+      
+	  username:"",
+      email:""
     };
+    this.changeUsername = this.changeUsername.bind(this);
     this.changeEmail = this.changeEmail.bind(this);
-    this.changeConfirmEmail = this.changeConfirmEmail.bind(this);
     this.processNewPassword = this.processNewPassword.bind(this);
+	this.processNewPassowrd2 = this.processNewPassowrd2.bind(this);
   }
+  
+  processNewPassowrd2(e){
+              if(!Store.isUserEmail(this.state.username, this.state.email))
+			  {
+				  e.preventDefault()
+			  }
+	          else if(!Store.usernameExists(this.state.username)){
+		              e.preventDefault()
+	           }
+	           else
+		           if(this.state.email === "")
+		           {
+			        e.preventDefault()
+		            }
+		            else
+                         if(this.state.username === ""){
+		                 e.preventDefault()
+	                      }
+  }
+  
   processNewPassword(){
-	  if(this.state.email === ""){
-		  alert("Please fill the Email field!")
+	  if(this.state.username === ""){
+		  alert("Please fill the Username field!")
 	  }
 	  else
-		  if(this.state.confirmEmail === "")
+		  if(!Store.usernameExists(this.state.username)){
+		  alert("Username does not exist!")
+	  }
+	  else
+		  if(this.state.email === "")
 		  {
 			  alert("Please confirm your Email!")
 		  }
 		  else
-			  if(this.state.email!==this.state.confirmEmail)
+			  if(!Store.isUserEmail(this.state.username, this.state.email))
 			  {
-				  alert("The Email confirmation is wrong!")
+				  alert("This Email does not belong to this user!")
 			  }
-			  else
-				  if(!Store.emailExists(this.state.email)){
-					  alert("This email is not signed up to ArtBook.")
-				  }
 				  else{
-				  alert("A new password was sent to your Email!")
+				  alert("Your password was sent to your Email!")
+				  Store.sendEmail(this.state.username);
 				  }
+  }
+  changeUsername(e){
+    this.setState({username:e.target.value})
   }
   changeEmail(e){
     this.setState({email:e.target.value})
-  }
-  changeConfirmEmail(e){
-    this.setState({confirmEmail:e.target.value})
   }
   render(){
     return(
@@ -66,14 +89,14 @@ export default class ForgotPassword extends React.Component{
             <h2 align="center">Password Recovery</h2>
             <div className="well">
               <div className="form-group">
-                <input className="form-control" placeholder="Email" onChange={this.changeEmail} value={this.state.email} required/>
+                <input className="form-control" placeholder="Username" onChange={this.changeUsername} value={this.state.username} required/>
               </div>
               <div className="form-group">
-                <input className="form-control" placeholder="Confirm Email" onChange={this.changeConfirmEmail} value={this.state.confirmEmail} required/>
+                <input className="form-control" placeholder="Email" onChange={this.changeEmail} value={this.state.email} required/>
               </div>
             <div className="form-group">
               <center>
-                <Link to="/"><button type="button" className="btn btn-primary" onClick={this.processNewPassword}>Recover Password</button></Link>
+                <Link to="/" onClick={this.processNewPassword}><button type="button" className="btn btn-primary" onClick={this.processNewPassowrd2}>Recover Password</button></Link>
               </center>
             </div>
 
@@ -84,18 +107,3 @@ export default class ForgotPassword extends React.Component{
     )
   }
 }
-
-
-/*<div className="page">
-  <form className="typeForm">
-
-      <h1>Introduza o seu e-mail</h1>
-      <input onChange={this.changeEmail} value={this.state.email}/>
-
-    <p>
-      <Link to="/">
-        <button onClick={this.processNewPassword}>Recover Password</button>
-      </Link>
-    </p>
-  </form>
-</div>*/
